@@ -11,3 +11,5 @@ This is a simple Python project that simulates a fast-food ordering system using
 1. Install Python (3.8 or above)
 2. Clone this repo:
 3. python Order_Food.py
+## 🌍 Live Demo
+Try the app here: [Restaurant Order System](https://restaurentordersystem-xqkr5htvmwosifrr8aryma.streamlit.app/)
