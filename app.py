@@ -1,6 +1,7 @@
 import streamlit as st
+import pandas as pd
 
-# Menu stored in dictionary
+# Menu (Dictionary)
 Menu = {
     'Broast': 150,
     'Burger': 120,
@@ -11,24 +12,45 @@ Menu = {
     'Zinger': 180,
 }
 
-# Title and description
-st.title("🍔 Umair's Fast Foods")
-st.write("Welcome to Umair's Fast Foods! Please select your order from the menu below:")
+# App Title & Intro
+st.title("🍔 Umair's Restaurant Ordering System")
+st.write("Welcome! Please place your order from the sidebar menu.")
 
-# Store order details
-order_items = []
-order_total = 0
+# Customer Info
+customer_name = st.text_input("Enter your name:")
 
-# Show menu with checkboxes
+# Sidebar - Order Selection
+st.sidebar.header("📋 Menu")
+
+order = {}
 for food, price in Menu.items():
-    if st.checkbox(f"{food} - Rs{price}"):
-        order_items.append(food)
-        order_total += price
+    quantity = st.sidebar.number_input(
+        f"{food} (Rs {price})", 
+        min_value=0, 
+        max_value=10, 
+        step=1
+    )
+    if quantity > 0:
+        order[food] = quantity
 
-# Show order summary
-if order_items:
-    st.subheader("🧾 Your Order:")
-    st.write(", ".join(order_items))
-    st.subheader(f"💰 Total Bill: Rs {order_total}")
-else:
-    st.info("Please select at least one food item to order.")
+# Confirm Order Button
+if st.button("✅ Confirm Order"):
+    if not order:
+        st.warning("Please select at least one item before confirming.")
+    elif not customer_name:
+        st.warning("Please enter your name before confirming.")
+    else:
+        # Build receipt DataFrame
+        order_summary = []
+        total = 0
+        for item, qty in order.items():
+            price = Menu[item]
+            subtotal = qty * price
+            total += subtotal
+            order_summary.append([item, qty, price, subtotal])
+        
+        df = pd.DataFrame(order_summary, columns=["Item", "Quantity", "Price", "Subtotal"])
+
+        st.success(f"Thank you {customer_name}! 🎉 Here’s your receipt:")
+        st.table(df)
+        st.subheader(f"💰 Total Bill: Rs {total}")
